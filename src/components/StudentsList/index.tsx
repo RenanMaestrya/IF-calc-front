@@ -27,6 +27,10 @@ const StudentList: React.FC = () => {
     setSelectedStudent(student);
     setIsFormModalOpen(true);
   };
+  const handleDeleteStudent = async (student: Student) => {
+    await studentService.deleteStudent(student.id);
+    fetchStudents();
+  };
 
   const handleCloseModals = () => {
     setIsDetailModalOpen(false);
@@ -39,7 +43,7 @@ const StudentList: React.FC = () => {
   }, []);
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container as React.CSSProperties}>
       <h2 style={styles.heading}>Student List</h2>
       <ul style={styles.list}>
         {students.map((student) => (
@@ -49,16 +53,22 @@ const StudentList: React.FC = () => {
 
             <div style={styles.buttonContainer}>
               <button
+                style={styles.buttonEdit}
+                onClick={() => handleEditStudent(student)}
+              >
+                Edit
+              </button>
+              <button
                 style={styles.button}
                 onClick={() => handleViewDetail(student)}
               >
                 View Detail
               </button>
               <button
-                style={styles.button}
-                onClick={() => handleEditStudent(student)}
+                style={styles.buttonDelete}
+                onClick={() => handleDeleteStudent(student)}
               >
-                Edit
+                Delete
               </button>
             </div>
           </li>
@@ -95,6 +105,7 @@ const styles = {
     padding: "20px",
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    minHeight: "100vh",
   },
   heading: {
     color: "#1a237e",
@@ -102,9 +113,10 @@ const styles = {
     marginBottom: "15px",
   },
   list: {
+    maxWidth: "600px",
+    margin: "0 auto",
     listStyleType: "none",
     padding: 0,
-    margin: 0,
   },
   item: {
     background: "#ffffff",
@@ -123,11 +135,30 @@ const styles = {
     marginBottom: "10px",
   },
   buttonContainer: {
+    marginTop: "10px",
     display: "flex",
     justifyContent: "space-between",
   },
   button: {
     background: "#1a237e",
+    color: "#fff",
+    padding: "8px 16px",
+    borderRadius: "4px",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "14px",
+  },
+  buttonEdit: {
+    background: "#ebca37",
+    color: "#fff",
+    padding: "8px 16px",
+    borderRadius: "4px",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "14px",
+  },
+  buttonDelete: {
+    background: "#bb1539",
     color: "#fff",
     padding: "8px 16px",
     borderRadius: "4px",

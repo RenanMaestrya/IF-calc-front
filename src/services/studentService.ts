@@ -20,7 +20,6 @@ const studentService = {
       const response: AxiosResponse<Student[]> = await axios.get(
         `${BASE_URL}/students`
       );
-      console.log(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.message);
@@ -32,14 +31,16 @@ const studentService = {
       const response: AxiosResponse<Student> = await axios.get(
         `${BASE_URL}/students/${id}`
       );
-      console.log(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.message);
     }
   },
 
-  createStudent: async (name: string, grades: number[]): Promise<Student> => {
+  createStudent: async (
+    name: string,
+    grades: number[] | undefined
+  ): Promise<Student> => {
     try {
       const student = {
         name: name,
@@ -50,7 +51,6 @@ const studentService = {
         `${BASE_URL}/students`,
         student
       );
-
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.message);

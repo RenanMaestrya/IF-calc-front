@@ -4,6 +4,7 @@ import studentService from "../../services/studentService";
 const Home = () => {
   const [studentName, setStudentName] = useState("");
   const [grades, setGrades] = useState(["", "", ""]);
+  const [average, setAverage] = useState(0);
 
   const handleChangeName = (event: any) => {
     setStudentName(event.target.value);
@@ -19,28 +20,40 @@ const Home = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      console.log("Student Name:", studentName);
-      console.log("Grades:", grades);
-
       const parsedGrades = grades.map((grade) =>
         grade === "" ? 0 : parseInt(grade)
       );
 
+      const validGrades = parsedGrades.filter((grade) => grade !== 0);
+
+      const average =
+        validGrades.reduce((acc, grade) => acc + grade, 0) / validGrades.length;
+
       const newStudent = await studentService.createStudent(
         studentName,
-        parsedGrades
+        parsedGrades as number[]
       );
-      console.log("Estudante criado:", newStudent);
+      if (newStudent.average) setAverage(average);
     } catch (error: any) {
       console.error("Erro ao criar estudante:", error.message);
     }
   };
 
+  const handleClean = () => {
+    setStudentName("");
+    setGrades(["", "", ""]);
+    setAverage(0);
+  };
+
   const styles = {
     container: {
       maxWidth: "400px",
-      margin: "0 auto",
+      margin: "20px auto",
       marginTop: "50px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
       padding: "20px",
       border: "2px solid #ccc",
       borderRadius: "8px",
@@ -57,6 +70,8 @@ const Home = () => {
       width: "100%",
       padding: "8px",
       fontSize: "16px",
+      border: "1px solid #ddd",
+      marginBottom: "10px",
     },
     submitButton: {
       backgroundColor: "#333",
@@ -66,14 +81,35 @@ const Home = () => {
       borderRadius: "4px",
       cursor: "pointer",
     },
+    cleanButton: {
+      backgroundColor: "#797979",
+      color: "#fff",
+      border: "none",
+      padding: "10px 20px",
+      borderRadius: "4px",
+      cursor: "pointer",
+    },
+    average: {
+      fontSize: "24px",
+      fontWeight: "bold",
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "baseline",
+    },
+    buttons: {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: "10px",
+    },
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Add New Student</h2>
+    <div style={styles.container as React.CSSProperties}>
+      <h2>Calculator</h2>
       <form onSubmit={handleSubmit}>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Student Name:</label>
+          <label style={styles.label}>Your Name:</label>
           <input
             type="text"
             value={studentName}
@@ -99,10 +135,19 @@ const Home = () => {
             />
           ))}
         </div>
-        <button type="submit" style={styles.submitButton}>
-          Submit
-        </button>
+        <div style={styles.buttons as React.CSSProperties}>
+          <button type="submit" style={styles.submitButton}>
+            Submit
+          </button>
+          <button type="reset" style={styles.cleanButton} onClick={handleClean}>
+            clean
+          </button>
+        </div>
       </form>
+      <div style={styles.average as React.CSSProperties}>
+        <h2>Average:</h2>
+        <p style={{ marginLeft: 8 }}>{average.toFixed(2)}</p>
+      </div>
     </div>
   );
 };

@@ -5,4 +5,5 @@ export interface Student {
   dateOfBirth: Date;
   course: string;
   grades: number[];
+  average?: number;
 }
